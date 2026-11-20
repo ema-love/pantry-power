@@ -13,7 +13,7 @@ interface NavItem {
 
 const NAV: NavItem[] = [
   { to: '/', label: 'Home', icon: House, match: (p) => p === '/' },
-  { to: '/pantry', label: 'My Pantry', icon: Package, match: (p) => p.startsWith('/pantry') || p.startsWith('/alerts') },
+  { to: '/pantry', label: 'My Pantry', icon: Package, match: (p) => p.startsWith('/pantry') || p.startsWith('/alerts') || p.startsWith('/import') },
   { to: '/shopping', label: 'Shopping', icon: ShoppingBasket, match: (p) => p.startsWith('/shopping') },
   { to: '/market', label: 'Market', icon: CalendarDays, match: (p) => p.startsWith('/market') },
   { to: '/settings', label: 'Settings', icon: Settings, match: (p) => p.startsWith('/settings') },

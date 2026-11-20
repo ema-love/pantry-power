@@ -13,6 +13,7 @@ A mobile-first web app for managing a household pantry: what you have, how much 
 - **Low-stock monitoring** — status is computed automatically: *Out of stock* at 0, *Running low* at or below the minimum, *In stock* above it. One tap (or "Add all") puts items on the shopping list with a suggested quantity.
 - **Expiry tracker** — Expired / within 7 days / within 30 days. Items without a date never show as expired; nothing is deleted automatically. Update the date or mark the item as thrown away.
 - **Shopping list** — grouped by category, remaining count and progress, tick off bought items, "In the basket" section, clear bought items. Entries linked to pantry items can top up pantry stock in one tap ("Update pantry").
+- **Import from a file** — update many items at once from an Excel (.xlsx), CSV or text file, or a pasted list (e.g. from WhatsApp). Choose *"I just bought these"* (quantities are added, matching shopping-list items are ticked off) or *"This is what I have now"* (a stock count that sets totals). Every row is previewed first — new items, top-ups, unchanged items and rows with problems — and the whole import can be undone. Headers can be in any order (Item, Quantity, Unit, Category, Expiry date, Warn me at, Where it is kept, Notes); "25 kg" in one cell and day-first dates like 31/12/2026 are understood. A template is downloadable from the import screen.
 - **Market planner** — plan a trip, choose a date, attach shopping-list items, add a note, turn on a reminder, tick items off at the market, mark the trip done (optionally restocking the pantry), see completed trips.
 - **Reminders** — always shown inside the app (day before and on the day). Browser notifications are requested only when you switch a reminder on.
 - **Settings** — household name, preferred units, reminder preferences, export / import backup, load / remove demo data, delete all data.
@@ -20,7 +21,7 @@ A mobile-first web app for managing a household pantry: what you have, how much 
 
 ## Tech stack
 
-React 19 · TypeScript · Vite · Tailwind CSS 3 · Lucide icons · Manrope (self-hosted via Fontsource) · Vitest.
+React 19 · TypeScript · Vite · Tailwind CSS 3 · Lucide icons · Manrope (self-hosted via Fontsource) · read-excel-file (loaded only when an .xlsx is imported) · Vitest.
 
 No backend, no accounts, no environment variables.
 
@@ -76,5 +77,6 @@ src/
 - Local-only data: clearing browser data deletes the pantry unless a backup was exported.
 - Browser notifications only appear while the app is open in a browser tab (there's no push server or service worker). The in-app reminder banner always works.
 - Photos are downscaled to about 480 px to fit local storage. Hundreds of photos may still hit the browser's storage limit; the app will warn if a save fails.
-- Restocking from the shopping list only happens when the list entry uses the same unit as the pantry item (e.g. both in kg).
+- Imports read text-based files only: Excel .xlsx, .csv, .tsv and .txt. Old .xls files, PDFs and photos of receipts are not read (no OCR); save them as .xlsx/.csv or paste the list instead.
+- Restocking from the shopping list or a file only happens when the list entry uses the same unit as the pantry item (e.g. both in kg).
 - No offline install service worker yet; the app can be added to the home screen via the web manifest.

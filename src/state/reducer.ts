@@ -15,6 +15,25 @@ export type PantryItemInput = Pick<
 
 export type ShoppingItemInput = Pick<ShoppingListItem, 'name' | 'categoryId' | 'quantity' | 'unit' | 'notes' | 'linkedPantryItemId'>;
 
+export interface ImportChange {
+  itemId: string;
+  kind: 'add' | 'set';
+  /** Amount to add (kind "add") or the new total (kind "set"). */
+  quantity: number;
+  expiryDate: string | null;
+  minimumStock: number | null;
+  purchaseDate: string | null;
+}
+
+export interface ImportPayload {
+  newUnits: Unit[];
+  newItems: { id: string; input: PantryItemInput }[];
+  changes: ImportChange[];
+  /** Open shopping-list entries bought in this import: ticked off and marked as already restocked. */
+  completeShoppingIds: string[];
+  note: string;
+}
+
 export type TripInput = Pick<MarketTrip, 'title' | 'plannedDate' | 'reminderEnabled' | 'notes' | 'shoppingListItems'>;
 
 export type Action =
@@ -43,6 +62,7 @@ export type Action =
   | { type: 'trip/delete'; id: string }
   | { type: 'trip/markNotified'; id: string; date: string }
   | { type: 'settings/update'; patch: Partial<Settings> }
+  | { type: 'import/apply'; payload: ImportPayload; at: string }
   | { type: 'demo/load' }
   | { type: 'demo/remove' }
   | { type: 'data/replace'; data: AppData }
@@ -334,6 +354,50 @@ export function reducer(state: AppData, action: Action): AppData {
 
     case 'settings/update':
       return { ...state, settings: { ...state.settings, ...action.patch } };
+
+    case 'import/apply': {
+      const { payload, at } = action;
+      const knownUnits = new Set(state.units.map((u) => u.id));
+      const units = [...state.units, ...payload.newUnits.filter((u) => !knownUnits.has(u.id))];
+      const preferred = [...state.settings.preferredUnits, ...payload.newUnits.map((u) => u.id).filter((id) => !state.settings.preferredUnits.includes(id))];
+      const txs: StockTransaction[] = [];
+      const changes = new Map(payload.changes.map((c) => [c.itemId, c]));
+
+      const items = state.items.map((item) => {
+        const change = changes.get(item.id);
+        if (!change) return item;
+        const quantity = roundQty(Math.max(0, change.kind === 'add' ? item.quantity + change.quantity : change.quantity));
+        const updated: PantryItem = {
+          ...item,
+          quantity,
+          expiryDate: change.expiryDate ?? item.expiryDate,
+          minimumStock: change.minimumStock ?? item.minimumStock,
+          purchaseDate: change.kind === 'add' ? change.purchaseDate ?? at.slice(0, 10) : change.purchaseDate ?? item.purchaseDate,
+          updatedAt: at,
+        };
+        const delta = roundQty(quantity - item.quantity);
+        if (delta !== 0) txs.push(makeTx(updated, change.kind === 'add' ? 'addition' : 'adjustment', delta, at, payload.note));
+        return updated;
+      });
+
+      for (const { id, input } of payload.newItems) {
+        const item: PantryItem = { ...input, id, quantity: roundQty(input.quantity), createdAt: at, updatedAt: at };
+        items.push(item);
+        if (item.quantity > 0) txs.push(makeTx(item, 'addition', item.quantity, at, payload.note));
+      }
+
+      const complete = new Set(payload.completeShoppingIds);
+      return {
+        ...state,
+        units,
+        settings: { ...state.settings, preferredUnits: preferred },
+        items,
+        transactions: capTransactions([...state.transactions, ...txs]),
+        shoppingList: state.shoppingList.map((s) =>
+          complete.has(s.id) && !s.isCompleted ? { ...s, isCompleted: true, completedAt: at, restockedAt: at } : s,
+        ),
+      };
+    }
 
     case 'demo/load': {
       const cleaned = reducer(state, { type: 'demo/remove' });

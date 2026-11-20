@@ -1,12 +1,12 @@
 import { useMemo } from 'react';
-import { CalendarDays, Link2, PackagePlus, Plus, ShoppingBasket, Sparkles, X } from 'lucide-react';
+import { CalendarDays, FileSpreadsheet, Link2, PackagePlus, Plus, ShoppingBasket, Sparkles, X } from 'lucide-react';
 import type { ShoppingListItem } from '../types';
 import { useStore } from '../state/store';
 import { useActions } from '../state/useActions';
 import { groupByCategory, lowStockItems, restockableEntries, toItemViews, upcomingTrips } from '../state/selectors';
 import { useSheets } from '../components/AppSheets';
 import { PageHeader } from '../components/layout/PageHeader';
-import { Button, Link } from '../components/ui/Button';
+import { Button, ButtonLink, Link } from '../components/ui/Button';
 import { RoundCheck } from '../components/ui/Checkbox';
 import { DemoBadge } from '../components/ui/Badge';
 import { EmptyState } from '../components/ui/EmptyState';
@@ -64,9 +64,14 @@ export function ShoppingPage() {
         title="Shopping list"
         subtitle={outstanding.length === 0 ? 'Everything is bought' : `${outstanding.length} item${outstanding.length === 1 ? '' : 's'} left to buy`}
         actions={
-          <Button icon={Plus} onClick={() => sheets.openShoppingForm()}>
-            Add item
-          </Button>
+          <>
+            <ButtonLink to="/import?mode=bought" variant="secondary" icon={FileSpreadsheet}>
+              Import purchases
+            </ButtonLink>
+            <Button icon={Plus} onClick={() => sheets.openShoppingForm()}>
+              Add item
+            </Button>
+          </>
         }
       />
 
