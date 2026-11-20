@@ -275,7 +275,13 @@ function Welcome() {
             Explore with demo items
           </Button>
         </div>
-        <p className="text-sm text-stone-warm">Demo items are clearly labelled and can be removed in one tap whenever you're ready.</p>
+        <p className="text-sm text-stone-warm">
+          Already keep your stock in Excel or a list?{' '}
+          <Link to="/import?mode=count" className="font-bold text-olive-700 underline">
+            Import it from a file
+          </Link>
+          . Demo items are clearly labelled and can be removed in one tap.
+        </p>
       </div>
     </section>
   );

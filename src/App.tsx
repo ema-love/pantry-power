@@ -15,12 +15,14 @@ import { ShoppingPage } from './pages/ShoppingPage';
 import { MarketPage } from './pages/MarketPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { ImportPage } from './pages/ImportPage';
 import { DemoBanner } from './components/DemoBanner';
 
 const TITLES: Record<string, string> = {
   '': 'Home',
   pantry: 'My Pantry',
   alerts: 'Needs attention',
+  import: 'Import from a file',
   shopping: 'Shopping list',
   market: 'Market planner',
   settings: 'Settings',
@@ -53,6 +55,9 @@ function Screen() {
       break;
     case 'alerts':
       page = <AlertsPage key={route.query.get('tab') ?? ''} query={route.query} />;
+      break;
+    case 'import':
+      page = <ImportPage key={route.query.get('mode') ?? ''} query={route.query} />;
       break;
     case 'shopping':
       page = <ShoppingPage />;

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowUpDown, BellRing, Package, Plus, Search, SearchX, X } from 'lucide-react';
+import { ArrowUpDown, BellRing, FileSpreadsheet, Package, Plus, Search, SearchX, X } from 'lucide-react';
 import { useStore } from '../state/store';
 import { toItemViews, type ItemView } from '../state/selectors';
 import { useSheets } from '../components/AppSheets';
@@ -83,12 +83,17 @@ export function PantryPage({ query }: { query: URLSearchParams }) {
             icon={Package}
             title="Your pantry is empty"
             action={
-              <Button size="lg" icon={Plus} onClick={() => sheets.openItemForm()}>
-                Add your first item
-              </Button>
+              <>
+                <Button size="lg" icon={Plus} onClick={() => sheets.openItemForm()}>
+                  Add your first item
+                </Button>
+                <ButtonLink to="/import?mode=count" size="lg" variant="secondary" icon={FileSpreadsheet}>
+                  Import from a file
+                </ButtonLink>
+              </>
             }
           >
-            Add what you have at home, like rice, beans or vegetable oil. It only takes a few seconds per item.
+            Add what you have at home, like rice, beans or vegetable oil — one at a time, or all at once from an Excel or CSV file.
           </EmptyState>
         </div>
       </>
@@ -107,6 +112,9 @@ export function PantryPage({ query }: { query: URLSearchParams }) {
                 Alerts <span className="tabular rounded-full bg-terracotta px-2 py-0.5 text-xs font-bold text-white">{alertCount}</span>
               </ButtonLink>
             )}
+            <ButtonLink to="/import" variant="secondary" icon={FileSpreadsheet}>
+              Import
+            </ButtonLink>
             <Button icon={Plus} onClick={() => sheets.openItemForm()} className="hidden sm:inline-flex">
               Add item
             </Button>

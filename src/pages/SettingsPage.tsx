@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
-import { BellRing, Download, FlaskConical, HardDrive, Home, Ruler, Shapes, Trash2, Upload, X } from 'lucide-react';
+import { BellRing, Download, FileSpreadsheet, FlaskConical, HardDrive, Home, Ruler, Shapes, Trash2, Upload, X } from 'lucide-react';
 import type { AppData } from '../types';
 import { useStore } from '../state/store';
 import { PageHeader } from '../components/layout/PageHeader';
 import { useRemoveDemo } from '../components/DemoBanner';
-import { Button } from '../components/ui/Button';
+import { Button, ButtonLink } from '../components/ui/Button';
 import { Switch } from '../components/ui/Checkbox';
 import { useConfirm } from '../components/ui/Confirm';
 import { useToast } from '../components/ui/Toast';
@@ -240,6 +240,12 @@ export function SettingsPage() {
             <p className="mt-3 text-sm text-stone-warm">
               Export a backup now and then — for example after a big market restock — and keep the file somewhere safe. You can also use it to move your pantry to another phone.
             </p>
+          </Panel>
+
+          <Panel icon={FileSpreadsheet} title="Import items from a spreadsheet" description="Add or update many pantry items at once from Excel, CSV or a pasted list.">
+            <ButtonLink to="/import" variant="secondary" icon={FileSpreadsheet}>
+              Import from a file
+            </ButtonLink>
           </Panel>
 
           <Panel icon={FlaskConical} title="Demo data" description="Sample Nigerian pantry items to try the app with.">
