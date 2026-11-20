@@ -1,0 +1,10 @@
+{
+  "name": "Pantry Power",
+  "short_name": "Pantry Power",
+  "description": "Your pantry. Your stock. Always in control.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF8F2",
+  "theme_color": "#465B3D",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}
